@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tejas Niranjan | Future Developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CORE VARIABLES & RESET --- */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-green: #39ff14;
+            --bg-dark: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Hide default cursor */
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Rajdhani', sans-serif;
+            color: white;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px var(--neon-blue);
+            transition: transform 0.1s;
+            transform: translate(-50%, -50%);
+        }
+        .cursor.active {
+            background-color: var(--neon-pink);
+            border-color: var(--neon-pink);
+            transform: scale(1.5) translate(-50%, -50%);
+        }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            perspective: 500px;
+            z-index: -1;
+            transform: scale(1.2);
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translateY(0) rotateX(10deg); }
+            100% { transform: translateY(50px) rotateX(10deg); }
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--neon-blue);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--neon-blue);
+            color: black;
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        /* --- SECTIONS --- */
+        .section {
+            display: none;
+            padding: 100px 20px 50px;
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: var(--neon-green);
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* --- HOME --- */
+        .profile-card {
+            background: var(--glass);
+            border: 1px solid var(--neon-blue);
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .highlight { color: var(--neon-pink); font-weight: bold; }
+
+        /* --- ACHIEVEMENTS TIMELINE --- */
+        .timeline {
+            border-left: 2px solid var(--neon-blue);
+            margin: 20px auto;
+            padding-left: 20px;
+            max-width: 800px;
+        }
+
+        .timeline-item {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            position: absolute;
+            left: -29px;
+            top: 5px;
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .rank-badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid gold;
+            color: gold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* --- PROJECTS --- */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background: var(--glass);
+            border: 1px solid var(--neon-green);
+            padding: 20px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .project-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        .project-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: var(--neon-green);
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        /* --- YOUTUBE --- */
+        .yt-container {
+            text-align: center;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid red;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        .yt-btn {
+            background: red;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+            border-radius: 50px;
+            box-shadow: 0 0 15px red;
+        }
+
+        /* --- CONTACT --- */
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input, textarea {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        .submit-btn {
+            background: var(--neon-blue);
+            border: none;
+            padding: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- GENX AI ASSISTANT --- */
+        #genx-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: black;
+            border: 1px solid var(--neon-pink);
+            border-radius: 10px;
+            z-index: 1000;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .genx-header {
+            background: var(--neon-pink);
+            color: white;
+            padding: 10px;
+            font-family: 'Orbitron';
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .genx-body {
+            height: 250px;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+
+        .genx-input-area {
+            display: flex;
+            border-top: 1px solid var(--neon-pink);
+        }
+
+        #genx-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 10px;
+        }
+
+        #genx-send {
+            background: var(--neon-pink);
+            border: none;
+            color: white;
+            padding: 0 15px;
+        }
+
+        .msg-bot { color: var(--neon-blue); margin-bottom: 5px; }
+        .msg-user { color: var(--neon-green); text-align: right; margin-bottom: 5px; }
+
+        /* --- AUTO SCROLL BTN --- */
+        .auto-scroll-btn {
+            position: fixed;
+            bottom: 350px; /* Above chatbot */
+            right: 20px;
+            background: transparent;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 10px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+        .auto-scroll-btn:hover {
+            background: var(--neon-green);
+            color: black;
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        /* MOBILE FIXES */
+        @media (max-width: 768px) {
+            nav { flex-wrap: wrap; }
+            .nav-btn { margin: 5px; font-size: 0.7rem; padding: 5px 10px; }
+            h1 { font-size: 2rem; }
+            #genx-container { width: 90%; right: 5%; bottom: 10px; }
+            .auto-scroll-btn { bottom: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+
+    <div class="cursor" id="cursor"></div>
+
+    <nav>
+        <button class="nav-btn active" onclick="showTab('home')">Home</button>
+        <button class="nav-btn" onclick="showTab('hobbies')">Hobbies</button>
+        <button class="nav-btn" onclick="showTab('achievements')">Achievements</button>
+        <button class="nav-btn" onclick="showTab('projects')">Projects</button>
+        <button class="nav-btn" onclick="showTab('youtube')">YouTube</button>
+        <button class="nav-btn" onclick="showTab('contact')">Contact</button>
+    </nav>
+
+    <div id="home" class="section active">
+        <br><br>
+        <h1>Tejas Niranjan</h1>
+        <h2>Tech Wizard | Musician | Reader</h2>
+        
+        <div class="profile-card">
+            <p><i class="fas fa-birthday-cake" style="color:var(--neon-pink)"></i> Age: 13 (DOB: 09.10.2012)</p>
+            <br>
+            <p><i class="fas fa-school" style="color:var(--neon-blue)"></i> Rani Laxmibai Public School, Jhansi</p>
+            <br>
+            <p><i class="fas fa-user-graduate" style="color:var(--neon-green)"></i> Class: 7</p>
+            <br>
+            <p>Welcome to my digital universe. I am passionate about creating the future through code and music.</p>
+        </div>
+    </div>
+
+    <div id="hobbies" class="section">
+        <br><br>
+        <h1>My Passions</h1>
+        <div class="project-grid">
+            <div class="project-card">
+                <i class="fas fa-laptop-code fa-3x" style="color:var(--neon-blue)"></i>
+                <h3>Coding & Dev</h3>
+                <p>Building websites, IoT projects, and software solutions.</p>
+            </div>
+            <div class="project-card">
+                <i class="fas fa-music fa-3x" style="color:var(--neon-pink)"></i>
+                <h3>Synthesizer</h3>
+                <p>Creating melodies and exploring the world of music.</p>
+            </div>
+            <div class="project-card">
+                <i class="fas fa-book-open fa-3x" style="color:var(--neon-green)"></i>
+                <h3>Reading</h3>
+                <p>Expanding knowledge through books and literature.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="achievements" class="section">
+        <br><br>
+        <h1>Olympiad Saga</h1>
+        <div class="timeline">
+            <div class="timeline-item">
+                <h3>Class 1 & 2</h3>
+                <span class="rank-badge">GOLD: SOF IMO</span>
+                <span class="rank-badge">GOLD: SOF NSO</span>
+            </div>
+            <div class="timeline-item">
+                <h3>Class 3</h3>
+                <span class="rank-badge">GOLD: IMO</span>
+                <span class="rank-badge">GOLD: NSO</span>
+                <span class="rank-badge">GOLD: NCO</span>
+                <span class="rank-badge">GOLD: IEO</span>
+            </div>
+            <div class="timeline-item">
+                <h3>Class 4</h3>
+                <span class="rank-badge">GOLD: IMO</span>
+                <span class="rank-badge">GOLD: NSO</span>
+                <span class="rank-badge" style="border-color:cyan; color:cyan;">Intl Rank 20: NCO</span>
+            </div>
+            <div class="timeline-item">
+                <h3>Class 5</h3>
+                <span class="rank-badge">GOLD: IMO</span>
+                <span class="rank-badge">GOLD: NSO</span>
+                <span class="rank-badge" style="border-color:cyan; color:cyan;">Intl Rank 5: NCO</span>
+            </div>
+            <div class="timeline-item">
+                <h3>Class 6</h3>
+                <span class="rank-badge">GOLD: IMO</span>
+                <span class="rank-badge">GOLD: NSO</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="projects" class="section">
+        <br><br>
+        <h1>Innovations</h1>
+        <div class="project-grid">
+            <div class="project-card">
+                <h3>IoT Based Irrigation</h3>
+                <p>A smart system to automate watering utilizing IoT sensors and cloud logic.</p>
+                <a href="https://tejasblynk.github.io/IoT-Based-Irrigation/" target="_blank" class="project-link">View Project</a>
+            </div>
+            <div class="project-card">
+                <h3>Project Alpha (Upcoming)</h3>
+                <p>Details coming soon. Watch this space for something revolutionizing.</p>
+                <button class="project-link" style="background:grey; cursor: not-allowed;">Coming Soon</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="youtube" class="section">
+        <br><br>
+        <h1>Tejas Musical World</h1>
+        <div class="yt-container">
+            <i class="fab fa-youtube fa-5x" style="color:red"></i>
+            <h2>@tejasmusicalworld468</h2>
+            <p>Check out my synthesizer performances and musical journey!</p>
+            <a href="https://www.youtube.com/@tejasmusicalworld468" target="_blank" class="yt-btn">SUBSCRIBE NOW</a>
+        </div>
+    </div>
+
+    <div id="contact" class="section">
+        <br><br>
+        <h1>Get In Touch</h1>
+        <div class="contact-form">
+            <p style="text-align:center;">
+                <i class="fas fa-envelope"></i> tejas.blynk@gmail.com<br>
+                <i class="fas fa-envelope"></i> tejas.edge@outlook.com
+            </p>
+            <form onsubmit="sendEmail(event)">
+                <input type="text" id="senderName" placeholder="Your Name" required>
+                <input type="email" id="senderEmail" placeholder="Your Email" required>
+                <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+                <button type="submit" class="submit-btn">Send Message via Agent</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="genx-container">
+        <div class="genx-header">
+            <span><i class="fas fa-robot"></i> GENX AI</span>
+            <button onclick="toggleGenX()" style="background:none; border:none; color:white;">-</button>
+        </div>
+        <div class="genx-body" id="genx-chat">
+            <div class="msg-bot">GENX: Hello! I am Tejas's AI Assistant. Ask me about his age, school, projects, or achievements!</div>
+        </div>
+        <div class="genx-input-area">
+            <input type="text" id="genx-input" placeholder="Ask GENX..." onkeypress="handleEnter(event)">
+            <button id="genx-send" onclick="askGenX()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <button class="auto-scroll-btn" onclick="toggleAutoScroll()" title="AI Auto Scroll">
+        <i class="fas fa-chevron-down"></i>
+    </button>
+
+    <script>
+        // --- CURSOR LOGIC ---
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.querySelectorAll('a, button, input, textarea').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('active'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
+        });
+
+        // --- TAB SWITCHING ---
+        function showTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            // Remove active class from buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show target
+            document.getElementById(tabId).classList.add('active');
+            
+            // Highlight button (simple find based on onclick attr)
+            const btns = document.getElementsByClassName('nav-btn');
+            for(let btn of btns) {
+                if(btn.getAttribute('onclick').includes(tabId)) {
+                    btn.classList.add('active');
+                }
+            }
+            window.scrollTo(0,0);
+        }
+
+        // --- GENX AI LOGIC ---
+        function toggleGenX() {
+            const body = document.querySelector('.genx-body');
+            const input = document.querySelector('.genx-input-area');
+            if(body.style.display === 'none') {
+                body.style.display = 'block';
+                input.style.display = 'flex';
+            } else {
+                body.style.display = 'none';
+                input.style.display = 'none';
+            }
+        }
+
+        function handleEnter(e) {
+            if(e.key === 'Enter') askGenX();
+        }
+
+        function askGenX() {
+            const input = document.getElementById('genx-input');
+            const chat = document.getElementById('genx-chat');
+            const question = input.value.toLowerCase().trim();
+            
+            if(question === "") return;
+
+            // User Message
+            chat.innerHTML += `<div class="msg-user">${input.value}</div>`;
+            input.value = '';
+
+            // AI Logic
+            let answer = "GENX: I'm not sure about that, but I know Tejas is awesome at coding!";
+            
+            if(question.includes('name') || question.includes('who')) {
+                answer = "GENX: This is the portfolio of Tejas Niranjan.";
+            } else if (question.includes('age') || question.includes('old') || question.includes('birth')) {
+                answer = "GENX: Tejas is 13 years old. Born on Oct 9, 2012.";
+            } else if (question.includes('school') || question.includes('class')) {
+                answer = "GENX: He studies at Rani Laxmibai Public School Jhansi, in Class 7.";
+            } else if (question.includes('hobby') || question.includes('like')) {
+                answer = "GENX: He loves Coding, Playing Synthesizer, and Reading books.";
+            } else if (question.includes('achievement') || question.includes('gold') || question.includes('rank')) {
+                answer = "GENX: Tejas has Gold medals in IMO and NSO from Class 1 to 6, and International Ranks in NCO!";
+            } else if (question.includes('project')) {
+                answer = "GENX: Check out the Projects tab! He built an IoT Irrigation system.";
+            } else if (question.includes('contact') || question.includes('email')) {
+                answer = "GENX: You can email him at tejas.blynk@gmail.com.";
+            } else if (question.includes('youtube')) {
+                answer = "GENX: His channel is 'Tejas Musical World'.";
+            } else if (question.includes('hello') || question.includes('hi')) {
+                answer = "GENX: Hello there! Welcome to the neon world.";
+            }
+
+            // Bot Response with slight delay
+            setTimeout(() => {
+                chat.innerHTML += `<div class="msg-bot">${answer}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 500);
+        }
+
+        // --- CONTACT FORM SIMULATION ---
+        function sendEmail(e) {
+            e.preventDefault();
+            const name = document.getElementById('senderName').value;
+            const msg = document.getElementById('message').value;
+            
+            // Alert user
+            alert(`Thanks ${name}! Opening your email client now...`);
+            
+            // Open Mailto
+            window.location.href = `mailto:tejas.blynk@gmail.com?subject=Message from Portfolio Website&body=From: ${name}%0D%0A%0D%0A${msg}`;
+        }
+
+        // --- AUTO SCROLL AI ---
+        let scrollInterval;
+        let isScrolling = false;
+
+        function toggleAutoScroll() {
+            if(isScrolling) {
+                clearInterval(scrollInterval);
+                isScrolling = false;
+                document.querySelector('.auto-scroll-btn').style.background = 'transparent';
+                document.querySelector('.auto-scroll-btn').style.color = 'var(--neon-green)';
+            } else {
+                alert("AI Auto-Pilot Engaged: Touring the page...");
+                isScrolling = true;
+                document.querySelector('.auto-scroll-btn').style.background = 'var(--neon-green)';
+                document.querySelector('.auto-scroll-btn').style.color = 'black';
+                
+                scrollInterval = setInterval(() => {
+                    window.scrollBy(0, 2); // Speed of scroll
+                    if((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                        clearInterval(scrollInterval);
+                        isScrolling = false;
+                        document.querySelector('.auto-scroll-btn').style.background = 'transparent';
+                        alert("Tour Complete!");
+                    }
+                }, 15);
+            }
+        }
+    </script>
+</body>
+</html>
