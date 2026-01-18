@@ -3,607 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEJAS NIRANJAN | SYSTEM OVERRIDE</title>
+    <title>TEJAS NIRANJAN // TITAN CORE</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- 0. GOD MODE VARIABLES --- */
         :root {
-            --core-cyan: #00f3ff;
-            --core-pink: #ff0055;
-            --core-gold: #ffd700;
-            --core-matrix: #0aff0a;
-            --bg-void: #020205;
-            --hud-glass: rgba(10, 20, 30, 0.65);
-            --hud-border: rgba(0, 243, 255, 0.3);
+            --void: #000000;
+            --titan-white: #ffffff;
+            --accent-dim: #1a1a1a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
         
         body {
-            background-color: var(--bg-void);
-            font-family: 'Rajdhani', sans-serif;
-            color: #fff;
+            background-color: var(--void);
+            font-family: 'Inter', sans-serif;
+            color: var(--titan-white);
             overflow-x: hidden;
-            height: 100vh;
+            line-height: 1.6;
         }
 
-        /* --- 1. BOOT SEQUENCE PRELOADER --- */
-        #boot-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column;
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--core-cyan);
+        /* --- 1. 3D BACKGROUND --- */
+        #canvas-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            perspective: 1000px;
         }
-        .loading-bar {
-            width: 300px; height: 4px; background: #333; margin-top: 20px;
-            position: relative; overflow: hidden;
-        }
-        .loading-progress {
-            width: 0%; height: 100%; background: var(--core-cyan);
-            box-shadow: 0 0 20px var(--core-cyan);
-            animation: loadSystem 2.5s ease-in-out forwards;
-        }
-        @keyframes loadSystem { 0% { width: 0%; } 40% { width: 30%; } 80% { width: 90%; } 100% { width: 100%; } }
-
-        /* --- 2. ADVANCED CURSOR --- */
-        .cursor-outer {
-            position: fixed; width: 50px; height: 50px;
-            border: 1px dashed var(--core-cyan); border-radius: 50%;
-            transform: translate(-50%, -50%); pointer-events: none; z-index: 9999;
-            transition: width 0.2s, height 0.2s, border-color 0.2s;
-            animation: rotateCursor 10s linear infinite;
-        }
-        .cursor-inner {
-            position: fixed; width: 8px; height: 8px; background: var(--core-pink);
-            border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 9999;
-            box-shadow: 0 0 10px var(--core-pink);
-        }
-        .cursor-crosshair {
-            position: fixed; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 9998;
-            background: transparent;
-        }
-        @keyframes rotateCursor { to { transform: translate(-50%, -50%) rotate(360deg); } }
-        
-        body.hover-active .cursor-outer { width: 80px; height: 80px; border-color: var(--core-pink); border-style: solid; animation: none; }
-        body.hover-active .cursor-inner { background: transparent; }
-
-        /* --- 3. BACKGROUND CANVAS --- */
-        #neural-net { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        
-        /* CRT SCANLINE EFFECT */
-        .scanlines {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9000;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            opacity: 0.4;
-        }
-
-        /* --- 4. HUD NAVIGATION --- */
-        nav {
-            position: fixed; top: 0; width: 100%; padding: 20px 50px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 100;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-        }
-        .logo { font-family: 'Orbitron'; font-size: 1.5rem; font-weight: 900; color: white; letter-spacing: 2px; }
-        .logo span { color: var(--core-cyan); }
-        
-        .nav-links { display: flex; gap: 30px; }
-        .nav-item {
-            color: rgba(255,255,255,0.7); text-decoration: none; font-family: 'Share Tech Mono';
-            text-transform: uppercase; font-size: 0.9rem; position: relative; transition: 0.3s;
-        }
-        .nav-item::before {
-            content: '['; margin-right: 5px; opacity: 0; color: var(--core-pink); transition: 0.3s;
-        }
-        .nav-item::after {
-            content: ']'; margin-left: 5px; opacity: 0; color: var(--core-pink); transition: 0.3s;
-        }
-        .nav-item:hover { color: white; text-shadow: 0 0 10px var(--core-cyan); }
-        .nav-item:hover::before, .nav-item:hover::after { opacity: 1; }
-
-        /* --- 5. SECTIONS & 3D TILT --- */
-        section { min-height: 100vh; padding: 100px 20px; display: flex; align-items: center; justify-content: center; position: relative; }
-        
-        .container { max-width: 1200px; width: 100%; position: relative; z-index: 2; }
-
-        .tilt-card {
-            background: var(--hud-glass);
-            border: 1px solid var(--hud-border);
-            padding: 50px;
-            border-radius: 5px;
-            position: relative;
+        .depth-layer {
+            position: absolute; width: 200%; height: 200%;
+            background-image: radial-gradient(circle, #fff 1px, transparent 1px);
+            background-size: 100px 100px;
+            opacity: 0.1;
             transform-style: preserve-3d;
-            transform: perspective(1000px);
-            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        
-        /* Decorative HUD Corners */
-        .tilt-card::before, .tilt-card::after {
-            content: ''; position: absolute; width: 30px; height: 30px;
-            border: 3px solid var(--core-cyan); transition: 0.3s;
-        }
-        .tilt-card::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
-        .tilt-card::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
-        .tilt-card:hover::before, .tilt-card:hover::after { width: 50px; height: 50px; border-color: var(--core-pink); }
-
-        h1 { font-family: 'Orbitron'; font-size: 5rem; line-height: 1; margin-bottom: 20px; text-transform: uppercase; }
-        .glitch-text { position: relative; color: white; }
-        .glitch-text::before, .glitch-text::after {
-            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
-        }
-        .glitch-text::before { color: var(--core-pink); z-index: -1; animation: glitch-anim-1 2s infinite linear alternate-reverse; }
-        .glitch-text::after { color: var(--core-cyan); z-index: -2; animation: glitch-anim-2 2s infinite linear alternate-reverse; }
-
-        @keyframes glitch-anim-1 { 0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px,0); } 100% { clip-path: inset(60% 0 10% 0); transform: translate(2px,0); } }
-        @keyframes glitch-anim-2 { 0% { clip-path: inset(10% 0 50% 0); transform: translate(2px,0); } 100% { clip-path: inset(80% 0 5% 0); transform: translate(-2px,0); } }
-
-        /* --- 6. GRID LAYOUTS --- */
-        .grid-3 {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px;
         }
 
-        .cyber-box {
-            background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); padding: 30px;
-            transition: 0.3s; position: relative; overflow: hidden;
+        /* --- 2. INTELLIGENT CURSOR --- */
+        #cursor-node {
+            position: fixed; width: 12px; height: 12px; background: var(--titan-white);
+            border-radius: 50%; pointer-events: none; z-index: 10000;
+            transition: transform 0.1s, width 0.3s, height 0.3s, border-radius 0.3s;
+            mix-blend-mode: difference;
         }
-        .cyber-box:hover { border-color: var(--core-cyan); transform: translateY(-10px); box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); }
-        .cyber-box h3 { font-family: 'Orbitron'; color: var(--core-cyan); margin-bottom: 10px; }
-        
-        .rank-tag {
-            display: inline-block; background: rgba(255, 215, 0, 0.1); border: 1px solid var(--core-gold);
-            color: var(--core-gold); padding: 2px 8px; font-size: 0.8rem; margin-top: 5px; font-family: 'Share Tech Mono';
+        .cursor-trail {
+            position: fixed; width: 40px; height: 40px; border: 1px solid var(--titan-white);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0.3;
         }
 
-        /* --- 7. YOUTUBE SECTION --- */
-        .yt-frame {
-            border: 2px solid #ff0000; background: rgba(50,0,0,0.5); padding: 40px; text-align: center;
-            position: relative; overflow: hidden;
+        /* --- 3. BENTO LAYOUT --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 20px;
         }
-        .yt-frame:hover .yt-bg { transform: scale(1.1); opacity: 0.3; }
-        .yt-bg {
-            position: absolute; top:0; left:0; width:100%; height:100%; 
-            background: radial-gradient(circle, red, transparent); opacity: 0.1; transition: 0.5s; z-index: -1;
+
+        .bento-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .sub-btn {
-            background: red; color: white; padding: 15px 40px; font-family: 'Orbitron'; font-weight: bold;
-            text-decoration: none; display: inline-block; margin-top: 20px; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+
+        .bento-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-5px);
+        }
+
+        .col-span-2 { grid-column: span 2; }
+        .row-span-2 { grid-row: span 2; }
+
+        /* --- 4. TYPOGRAPHY & MASKS --- */
+        .reveal-text {
+            font-family: 'Syncopate', sans-serif;
+            font-weight: 700;
+            font-size: clamp(2rem, 8vw, 6rem);
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; color: #666; font-size: 0.8rem; }
+
+        /* --- 5. DATA SECTIONS --- */
+        .stat-circle {
+            width: 120px; height: 120px; border: 1px solid var(--titan-white);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 20px; font-weight: 700; font-size: 1.5rem;
+        }
+
+        .achievement-tag {
+            display: inline-block; padding: 4px 12px; border: 1px solid var(--titan-white);
+            border-radius: 50px; font-size: 0.7rem; margin: 5px;
+            text-transform: uppercase;
+        }
+
+        /* --- 6. GENX TITAN AI --- */
+        #titan-ai {
+            position: fixed; bottom: 40px; left: 40px; z-index: 500;
+        }
+        .ai-sphere {
+            width: 60px; height: 60px; background: var(--titan-white);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: var(--void); font-size: 1.5rem; transition: 0.5s;
+        }
+        .ai-sphere:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 0 30px #fff; }
+
+        #ai-window {
+            position: absolute; bottom: 80px; left: 0; width: 350px; height: 450px;
+            background: #0a0a0a; border: 1px solid var(--border); border-radius: 20px;
+            display: none; flex-direction: column; overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        /* --- 7. BUTTONS --- */
+        .btn-titan {
+            background: var(--titan-white); color: var(--void);
+            padding: 15px 30px; border-radius: 50px; text-decoration: none;
+            font-weight: 700; display: inline-block; margin-top: 20px;
             transition: 0.3s;
         }
-        .sub-btn:hover { box-shadow: 0 0 30px red; letter-spacing: 2px; }
+        .btn-titan:hover { opacity: 0.8; transform: scale(0.95); }
 
-        /* --- 8. GENX AI CHAT --- */
-        #genx-terminal {
-            position: fixed; bottom: 20px; right: 20px; width: 350px; height: 500px;
-            background: #000; border: 1px solid var(--core-pink); z-index: 5000;
-            display: flex; flex-direction: column; font-family: 'Share Tech Mono';
-            transform: translateY(110%); transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 40px rgba(255, 0, 85, 0.3);
-        }
-        #genx-terminal.active { transform: translateY(0); }
-        
-        .term-head { background: var(--core-pink); padding: 10px; color: black; font-weight: bold; display: flex; justify-content: space-between; }
-        .term-body { flex: 1; padding: 20px; overflow-y: auto; color: #ddd; font-size: 0.9rem; }
-        .term-input { border-top: 1px solid #333; padding: 15px; display: flex; }
-        .term-input input { background: transparent; border: none; color: var(--core-pink); width: 100%; outline: none; font-family: 'Share Tech Mono'; }
-
-        .ai-msg { margin-bottom: 10px; color: var(--core-cyan); text-shadow: 0 0 5px var(--core-cyan); }
-        .user-msg { margin-bottom: 10px; color: white; text-align: right; }
-
-        .genx-trigger {
-            position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;
-            background: black; border: 2px solid var(--core-pink); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; z-index: 5001;
-            color: var(--core-pink); font-size: 1.5rem; transition: 0.3s;
-        }
-        .genx-trigger:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 0 20px var(--core-pink); background: var(--core-pink); color: black; }
-
-        /* --- 9. MOBILE FIX --- */
-        @media (max-width: 768px) {
-            h1 { font-size: 3rem; }
-            nav { padding: 10px; justify-content: center; }
-            .nav-links { display: none; } /* Simplified for mobile */
-            .tilt-card { padding: 20px; }
-            #genx-terminal { width: 90%; right: 5%; bottom: 90px; }
-            .genx-trigger { bottom: 20px; }
+        /* --- MOBILE --- */
+        @media (max-width: 900px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .col-span-2 { grid-column: span 1; }
         }
     </style>
 </head>
 <body>
 
-    <div id="boot-screen">
-        <div style="font-size: 2rem; margin-bottom: 20px;">SYSTEM BOOT: <span style="color:var(--core-pink)">TEJAS_OS_V13</span></div>
-        <div class="loading-bar"><div class="loading-progress"></div></div>
-        <div style="margin-top: 10px; opacity: 0.7;">INITIALIZING CORE MODULES...</div>
+    <div id="canvas-container">
+        <div class="depth-layer" id="stars"></div>
     </div>
 
-    <div class="cursor-outer"></div>
-    <div class="cursor-inner"></div>
-    
-    <canvas id="neural-net"></canvas>
-    <div class="scanlines"></div>
+    <div id="cursor-node"></div>
+    <div class="cursor-trail" id="cursor-trail"></div>
 
-    <nav>
-        <div class="logo">TEJAS<span>.NIRANJAN</span></div>
-        <div class="nav-links">
-            <a href="#hero" class="nav-item">Core</a>
-            <a href="#skills" class="nav-item">Skills</a>
-            <a href="#achievements" class="nav-item">Intel</a>
-            <a href="#projects" class="nav-item">Projects</a>
-            <a href="#youtube" class="nav-item">Media</a>
-            <a href="#contact" class="nav-item">Uplink</a>
-        </div>
-    </nav>
-
-    <section id="hero">
-        <div class="container">
-            <div class="tilt-card" id="profile-card">
-                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 40px;">
-                    <div style="flex: 1; min-width: 250px;">
-                        <h2 style="color:var(--core-cyan); font-family:'Share Tech Mono'; letter-spacing: 5px;">ARCHITECT // 13 YRS</h2>
-                        <h1 class="glitch-text" data-text="TEJAS NIRANJAN">TEJAS NIRANJAN</h1>
-                        <p style="font-size: 1.2rem; max-width: 500px; line-height: 1.6;">
-                            Student at <strong>Rani Laxmibai Public School, Jhansi</strong>. <br>
-                            Coding the future, playing the synthesizer, and dominating Olympiads.
-                        </p>
-                        <div style="margin-top: 30px;">
-                            <button onclick="document.getElementById('projects').scrollIntoView()" class="sub-btn" style="background:var(--core-cyan); color:black; clip-path: polygon(0 0, 90% 0, 100% 100%, 10% 100%);">VIEW PROTOCOLS</button>
-                        </div>
-                    </div>
-                    <div style="border: 1px solid rgba(255,255,255,0.2); padding: 20px; background: rgba(0,0,0,0.5);">
-                        <div style="font-family:'Share Tech Mono'; margin-bottom:10px; color:var(--core-matrix);">:: SYSTEM STATS ::</div>
-                        <p>CLASS: 07</p>
-                        <p>DOB: 09.10.2012</p>
-                        <p>LOCATION: JHANSI, IN</p>
-                        <p>STATUS: ONLINE</p>
-                    </div>
+    <main class="bento-grid">
+        
+        <div class="bento-item col-span-2 row-span-2">
+            <p class="mono">// SYSTEM IDENTITY V.7</p>
+            <h1 class="reveal-text">TEJAS<br>NIRANJAN</h1>
+            <p style="font-size: 1.2rem; opacity: 0.6; max-width: 500px;">
+                13-year-old developer and musician bridging the gap between digital logic and harmonic sound.
+            </p>
+            <div style="margin-top: 40px; display: flex; gap: 20px;">
+                <div class="stat-circle">CL 07</div>
+                <div style="display:flex; flex-direction:column; justify-content:center;">
+                    <p class="mono">LOCATION</p>
+                    <p>RLPS, Jhansi</p>
                 </div>
             </div>
         </div>
-    </section>
 
-    <section id="skills">
-        <div class="container">
-            <h2 style="font-family:'Orbitron'; color:white; border-bottom: 2px solid var(--core-pink); display:inline-block; margin-bottom:30px;">MODULES & PASSIONS</h2>
-            <div class="grid-3">
-                <div class="cyber-box">
-                    <i class="fas fa-terminal fa-3x" style="color:var(--core-cyan); margin-bottom:20px;"></i>
-                    <h3>CODING & DEV</h3>
-                    <p>Proficiency in HTML5, CSS3, JS. Developing IoT solutions and web interfaces.</p>
-                </div>
-                <div class="cyber-box">
-                    <i class="fas fa-music fa-3x" style="color:var(--core-pink); margin-bottom:20px;"></i>
-                    <h3>SYNTHESIZER</h3>
-                    <p>Creating sonic landscapes. Exploring electronic music theory and performance.</p>
-                </div>
-                <div class="cyber-box">
-                    <i class="fas fa-book fa-3x" style="color:var(--core-gold); margin-bottom:20px;"></i>
-                    <h3>KNOWLEDGE</h3>
-                    <p>Avid reader. Expanding database on science, fiction, and technology.</p>
-                </div>
+        <div class="bento-item col-span-2">
+            <p class="mono">// MEDIA UPLINK</p>
+            <h2 style="font-family:'Syncopate'">TEJAS MUSICAL WORLD</h2>
+            <p style="opacity: 0.5;">Synthesizer & Production</p>
+            <a href="https://www.youtube.com/@tejasmusicalworld468" target="_blank" class="btn-titan">LISTEN</a>
+        </div>
+
+        <div class="bento-item">
+            <p class="mono">// CAPABILITIES</p>
+            <ul style="list-style:none; margin-top:20px;">
+                <li>IOT SYSTEMS</li>
+                <li>PYTHON</li>
+                <li>THREE.JS</li>
+                <li>UI DESIGN</li>
+            </ul>
+        </div>
+
+        <div class="bento-item">
+            <p class="mono">// TIMELINE</p>
+            <h2 style="font-size: 2.5rem;">09.10<br>2012</h2>
+        </div>
+
+        <div class="bento-item col-span-2">
+            <p class="mono">// OLYMPIAD REGISTRY</p>
+            <div style="margin-top:20px;">
+                <div class="achievement-tag">Cl 1-2: Gold IMO/NSO</div>
+                <div class="achievement-tag">Cl 3: Quad Gold (IMO/NSO/NCO/IEO)</div>
+                <div class="achievement-tag">Cl 4: Intl Rank 20 NCO</div>
+                <div class="achievement-tag">Cl 5: Intl Rank 05 NCO</div>
+                <div class="achievement-tag">Cl 6: Gold IMO/NSO</div>
             </div>
         </div>
-    </section>
 
-    <section id="achievements">
-        <div class="container">
-            <h2 style="font-family:'Orbitron'; text-align:right; color:var(--core-gold); margin-bottom:30px;">OLYMPIAD LOGS //</h2>
-            
-            <div class="grid-3">
-                <div class="cyber-box" style="border-left: 5px solid var(--core-gold);">
-                    <div style="font-size:3rem; opacity:0.2; position:absolute; right:10px; top:0;">01</div>
-                    <h3>CLASS 1-2</h3>
-                    <span class="rank-tag">GOLD: SOF IMO</span>
-                    <span class="rank-tag">GOLD: SOF NSO</span>
-                    <p style="margin-top:10px; font-size:0.9rem;">The beginning of the streak.</p>
+        <div class="bento-item col-span-2">
+            <p class="mono">// ACTIVE PROJECTS</p>
+            <div style="display:flex; justify-content:space-between; align-items:end; margin-top:20px;">
+                <div>
+                    <h3>IoT Irrigation V1</h3>
+                    <p style="opacity:0.5;">Smart Agriculture Logic</p>
                 </div>
-
-                <div class="cyber-box" style="border-left: 5px solid var(--core-gold);">
-                    <div style="font-size:3rem; opacity:0.2; position:absolute; right:10px; top:0;">02</div>
-                    <h3>CLASS 3</h3>
-                    <span class="rank-tag">GOLD: IMO</span>
-                    <span class="rank-tag">GOLD: NSO</span>
-                    <span class="rank-tag">GOLD: NCO</span>
-                    <span class="rank-tag">GOLD: IEO</span>
-                    <p style="margin-top:10px; font-size:0.9rem;">Complete domination across all subjects.</p>
-                </div>
-
-                <div class="cyber-box" style="border-left: 5px solid var(--core-cyan);">
-                    <div style="font-size:3rem; opacity:0.2; position:absolute; right:10px; top:0;">03</div>
-                    <h3>CLASS 4-5</h3>
-                    <span class="rank-tag" style="border-color:cyan; color:cyan;">INTL RANK 20: NCO (Cl 4)</span>
-                    <span class="rank-tag" style="border-color:cyan; color:cyan;">INTL RANK 5: NCO (Cl 5)</span>
-                    <br>
-                    <span class="rank-tag">GOLD: IMO & NSO</span>
-                </div>
-
-                <div class="cyber-box" style="border-left: 5px solid var(--core-pink);">
-                    <div style="font-size:3rem; opacity:0.2; position:absolute; right:10px; top:0;">04</div>
-                    <h3>CLASS 6 (CURRENT)</h3>
-                    <span class="rank-tag">GOLD: IMO</span>
-                    <span class="rank-tag">GOLD: NSO</span>
-                    <p style="margin-top:10px; font-size:0.9rem;">Continuing the legacy of excellence.</p>
-                </div>
+                <a href="https://tejasblynk.github.io/IoT-Based-Irrigation/" class="mono" style="color:#fff;">[ VIEW_SOURCE ]</a>
             </div>
         </div>
-    </section>
 
-    <section id="projects">
-        <div class="container">
-            <h2 style="font-family:'Orbitron'; margin-bottom:30px;">PROJECT PROTOCOLS</h2>
-            <div class="grid-3">
-                <div class="cyber-box">
-                    <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" style="width:100%; height:150px; object-fit:cover; margin-bottom:15px; filter: grayscale(100%);">
-                    <h3>IoT IRRIGATION SYSTEM</h3>
-                    <p>Automated agriculture solution using sensors and cloud data to optimize water usage.</p>
-                    <a href="https://tejasblynk.github.io/IoT-Based-Irrigation/" target="_blank" class="sub-btn" style="background:transparent; border:1px solid var(--core-cyan); color:var(--core-cyan); padding:10px 20px;">EXECUTE</a>
-                </div>
-                
-                <div class="cyber-box">
-                    <div style="width:100%; height:150px; background:#111; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
-                        <i class="fas fa-lock fa-3x" style="color:#333;"></i>
-                    </div>
-                    <h3>PROJECT [REDACTED]</h3>
-                    <p>Data unavailable. Clearance Level 7 required. Coming soon to this terminal.</p>
-                </div>
+        <div class="bento-item col-span-2">
+            <p class="mono">// CONTACT GATEWAY</p>
+            <div style="margin-top:20px; display:flex; flex-wrap:wrap; gap:20px;">
+                <p>tejas.blynk@gmail.com</p>
+                <p>tejas.edge@outlook.com</p>
             </div>
         </div>
-    </section>
 
-    <section id="youtube">
-        <div class="container">
-            <div class="yt-frame">
-                <div class="yt-bg"></div>
-                <i class="fab fa-youtube fa-5x" style="color:red; margin-bottom:20px; filter: drop-shadow(0 0 10px red);"></i>
-                <h2 style="font-family:'Orbitron'; font-size:2.5rem;">TEJAS MUSICAL WORLD</h2>
-                <h3 style="color: #aaa; margin-bottom:20px;">@tejasmusicalworld468</h3>
-                <p>Experience the fusion of technology and melody. Watch my synthesizer performances.</p>
-                <a href="https://www.youtube.com/@tejasmusicalworld468" target="_blank" class="sub-btn">SUBSCRIBE NOW</a>
+    </main>
+
+    <div id="titan-ai">
+        <div id="ai-window">
+            <div style="padding:20px; border-bottom:1px solid var(--border); font-family:'Syncopate'; font-size:0.8rem;">TITAN_AI_OS</div>
+            <div id="ai-chat" style="flex:1; padding:20px; overflow-y:auto; font-size:0.9rem; font-family:'JetBrains Mono'; color:#888;">
+                > INITIALIZING...<br>
+                > HELLO TEJAS. READY TO ARCHITECT?
+            </div>
+            <div style="padding:10px; border-top:1px solid var(--border);">
+                <input type="text" id="ai-input" placeholder="Type command..." style="width:100%; background:transparent; border:none; color:#fff; outline:none; font-family:'JetBrains Mono';">
             </div>
         </div>
-    </section>
-
-    <section id="contact">
-        <div class="container" style="text-align:center;">
-            <h2 style="font-family:'Orbitron'; color:var(--core-cyan);">ESTABLISH UPLINK</h2>
-            <div class="grid-3" style="max-width:800px; margin: 40px auto 0;">
-                <div class="cyber-box">
-                    <i class="fas fa-envelope fa-2x"></i>
-                    <p style="margin-top:10px;">tejas.blynk@gmail.com</p>
-                </div>
-                <div class="cyber-box">
-                    <i class="fas fa-envelope fa-2x"></i>
-                    <p style="margin-top:10px;">tejas.edge@outlook.com</p>
-                </div>
-            </div>
-            
-            <form id="contactForm" onsubmit="sendMail(event)" style="max-width:600px; margin:40px auto; display:flex; flex-direction:column; gap:15px;">
-                <input type="text" id="senderName" placeholder="AGENT NAME" style="background:rgba(0,0,0,0.5); border:1px solid var(--core-cyan); padding:15px; color:white; font-family:'Share Tech Mono';">
-                <textarea id="senderMsg" rows="4" placeholder="TRANSMISSION DATA" style="background:rgba(0,0,0,0.5); border:1px solid var(--core-cyan); padding:15px; color:white; font-family:'Share Tech Mono';"></textarea>
-                <button type="submit" class="sub-btn" style="background:var(--core-cyan); color:black;">SEND DATA</button>
-            </form>
-        </div>
-    </section>
-
-    <div class="genx-trigger" onclick="toggleGenX()"><i class="fas fa-robot"></i></div>
-    
-    <div id="genx-terminal">
-        <div class="term-head">
-            <span>GENX_AI_v3.0</span>
-            <span onclick="toggleGenX()" style="cursor:pointer;">[X]</span>
-        </div>
-        <div class="term-body" id="term-body">
-            <div class="ai-msg">> SYSTEM ONLINE.</div>
-            <div class="ai-msg">> I am GENX. The Digital Guardian of this portfolio.</div>
-            <div class="ai-msg">> Ask me about Tejas's [Projects], [Age], or [School].</div>
-        </div>
-        <div class="term-input">
-            <span style="color:var(--core-pink); margin-right:10px;">>></span>
-            <input type="text" id="term-input" onkeypress="handleTerm(event)" autocomplete="off">
+        <div class="ai-sphere" onclick="toggleAI()">
+            <i class="fas fa-ghost"></i>
         </div>
     </div>
 
     <script>
-        // --- 1. BOOT SEQUENCE ---
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('boot-screen').style.opacity = '0';
-                document.getElementById('boot-screen').style.pointerEvents = 'none';
-                // Trigger entry animations
-                document.getElementById('profile-card').style.transform = 'rotateX(0deg) rotateY(0deg)';
-            }, 2500);
-        });
+        // --- 1. 3D PARALLAX BACKGROUND ---
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.05;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.05;
+            document.getElementById('stars').style.transform = `translate3d(${moveX}px, ${moveY}px, 0) rotateX(${moveY*0.1}deg) rotateY(${moveX*0.1}deg)`;
 
-        // --- 2. INTERACTIVE CONSTELLATION BACKGROUND ---
-        const canvas = document.getElementById('neural-net');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let particles = [];
-        const mouse = { x: null, y: null };
-
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
+            // --- 2. MAGNETIC CURSOR ---
+            const node = document.getElementById('cursor-node');
+            const trail = document.getElementById('cursor-trail');
             
-            // Cursor Logic within the event listener for performance
-            const outer = document.querySelector('.cursor-outer');
-            const inner = document.querySelector('.cursor-inner');
-            outer.style.left = e.x + 'px';
-            outer.style.top = e.y + 'px';
-            setTimeout(() => {
-                inner.style.left = e.x + 'px';
-                inner.style.top = e.y + 'px';
-            }, 40);
-        });
-        
-        // Add hover classes
-        document.querySelectorAll('a, button, .cyber-box').forEach(el => {
-            el.addEventListener('mouseenter', () => document.body.classList.add('hover-active'));
-            el.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
+            node.style.left = e.clientX + 'px';
+            node.style.top = e.clientY + 'px';
+            
+            trail.style.left = e.clientX - 14 + 'px';
+            trail.style.top = e.clientY - 14 + 'px';
         });
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speedX = (Math.random() * 1.5) - 0.75;
-                this.speedY = (Math.random() * 1.5) - 0.75;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if(this.x > canvas.width || this.x < 0) this.speedX *= -1;
-                if(this.y > canvas.height || this.y < 0) this.speedY *= -1;
-            }
-            draw() {
-                ctx.fillStyle = '#00f3ff';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+        // --- 3. CURSOR MORPHING ---
+        document.querySelectorAll('.bento-item, .btn-titan').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                document.getElementById('cursor-node').style.transform = 'scale(4)';
+                document.getElementById('cursor-node').style.borderRadius = '4px';
+            });
+            item.addEventListener('mouseleave', () => {
+                document.getElementById('cursor-node').style.transform = 'scale(1)';
+                document.getElementById('cursor-node').style.borderRadius = '50%';
+            });
+        });
+
+        // --- 4. TITAN AI LOGIC ---
+        function toggleAI() {
+            const win = document.getElementById('ai-window');
+            win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        function initParticles() {
-            particles = [];
-            for(let i=0; i<80; i++) particles.push(new Particle());
-        }
-        initParticles();
+        const aiInput = document.getElementById('ai-input');
+        const aiChat = document.getElementById('ai-chat');
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for(let i=0; i<particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const val = aiInput.value.toLowerCase();
+                aiChat.innerHTML += `<br><span style="color:#fff">> ${val}</span>`;
                 
-                // Connect particles
-                for(let j=i; j<particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx*dx + dy*dy);
-                    if(distance < 100) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(0, 243, 255, ${1 - distance/100})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-
-                // Connect to mouse
-                if(mouse.x) {
-                    const dx = particles[i].x - mouse.x;
-                    const dy = particles[i].y - mouse.y;
-                    const distance = Math.sqrt(dx*dx + dy*dy);
-                    if(distance < 150) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(255, 0, 85, ${1 - distance/150})`;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(mouse.x, mouse.y);
-                        ctx.stroke();
-                    }
-                }
+                let response = "COMMAND_NOT_FOUND";
+                if(val.includes('age')) response = "TEJAS_AGE: 13 YEARS";
+                if(val.includes('school')) response = "ACADEMIC_HUB: RANI LAXMIBAI PUBLIC SCHOOL";
+                if(val.includes('olympiad')) response = "RECORDS: MULTIPLE GOLD MEDALIST (IMO/NSO/NCO)";
+                if(val.includes('youtube')) response = "REDIRECTING_TO: TEJAS MUSICAL WORLD";
+                
+                setTimeout(() => {
+                    aiChat.innerHTML += `<br>> ${response}`;
+                    aiChat.scrollTop = aiChat.scrollHeight;
+                }, 400);
+                
+                aiInput.value = '';
             }
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // --- 3. 3D TILT EFFECT ---
-        const card = document.getElementById('profile-card');
-        const heroSection = document.getElementById('hero');
-
-        heroSection.addEventListener('mousemove', (e) => {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        });
-        
-        heroSection.addEventListener('mouseleave', () => {
-            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
         });
 
-        // --- 4. GENX AI v3.0 ---
-        function toggleGenX() {
-            document.getElementById('genx-terminal').classList.toggle('active');
-        }
-
-        function handleTerm(e) {
-            if(e.key === 'Enter') {
-                const input = document.getElementById('term-input');
-                const val = input.value.trim();
-                if(val) {
-                    addLog(val, 'user');
-                    input.value = '';
-                    setTimeout(() => processAI(val), 500);
-                }
-            }
-        }
-
-        function addLog(text, type) {
-            const div = document.createElement('div');
-            div.className = type === 'user' ? 'user-msg' : 'ai-msg';
-            div.innerText = (type === 'bot' ? '> ' : '') + text;
-            const body = document.getElementById('term-body');
-            body.appendChild(div);
-            body.scrollTop = body.scrollHeight;
-        }
-
-        function processAI(cmd) {
-            const lower = cmd.toLowerCase();
-            let response = "COMMAND_UNRECOGNIZED. Try [Projects] or [Contact].";
-            
-            if(lower.includes('project')) {
-                response = "Retrieving Project Database...";
-                document.getElementById('projects').scrollIntoView({behavior: 'smooth'});
-            } else if(lower.includes('age') || lower.includes('old')) {
-                response = "Subject: Tejas Niranjan. Age: 13. DOB: 09/10/2012.";
-            } else if(lower.includes('school')) {
-                response = "Affiliation: Rani Laxmibai Public School, Jhansi.";
-            } else if(lower.includes('gold') || lower.includes('win')) {
-                response = "Records indicate consistent GOLD medals in SOF IMO/NSO since Class 1.";
-            } else if(lower.includes('youtube')) {
-                response = "Loading Media Module: Tejas Musical World.";
-                document.getElementById('youtube').scrollIntoView({behavior: 'smooth'});
-            } else if(lower.includes('hello') || lower.includes('hi')) {
-                response = "Connection established. Awaiting input.";
-            } else if(lower.includes('scroll')) {
-                response = "Auto-Pilot Engaged.";
-                autoScroll();
-            }
-
-            // Simulate typing effect
-            let i = 0;
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'ai-msg';
-            msgDiv.innerText = '> ';
-            document.getElementById('term-body').appendChild(msgDiv);
-            
-            const interval = setInterval(() => {
-                msgDiv.innerText += response.charAt(i);
-                i++;
-                if(i > response.length - 1) clearInterval(interval);
-                document.getElementById('term-body').scrollTop = document.getElementById('term-body').scrollHeight;
-            }, 30);
-        }
-
-        function autoScroll() {
-            window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-        }
-
-        function sendMail(e) {
-            e.preventDefault();
-            const name = document.getElementById('senderName').value;
-            const msg = document.getElementById('senderMsg').value;
-            window.location.href = `mailto:tejas.blynk@gmail.com?subject=UPLINK FROM ${name}&body=${msg}`;
-        }
+        // --- 5. INITIAL TYPEOUT ---
+        console.log("TITAN OS INITIALIZED // WELCOME TEJAS");
     </script>
 </body>
 </html>
